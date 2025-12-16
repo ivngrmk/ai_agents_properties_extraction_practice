@@ -17,6 +17,9 @@ class PropertiesExtractor(BasePropertiesExtractor):
     def __init__(self) -> None:
         super().__init__()
 
+        self.fulltext : str = ""
+        self.combined_block : str = ""
+
         self.materials_extraction_prompt : Optional[str] = None
         self.materials_extraction_in : Optional[str] = None
         self.materials_extraction_out : Optional[str] = None
@@ -66,6 +69,7 @@ class PropertiesExtractor(BasePropertiesExtractor):
         property mentioned nearby in the text (ZT, S, σ, ρ, PF, κ).
         This is a lightweight pre-filter used to seed material hints downstream.
         """
+        self.fulltext = fulltext
         if self.materials_extraction_prompt is None:
             raise PromptNotImplementedError("materials_extraction_prompt is not yet defined")
         prompt = PromptTemplate.from_template(self.materials_extraction_prompt)
@@ -94,6 +98,7 @@ class PropertiesExtractor(BasePropertiesExtractor):
         return result
 
     def extract_thermo_properties(self, fulltext: str, llm, material_names: Optional[List[str]] = None) -> Dict:
+        self.fulltext = fulltext
         material_hint = ""
         if material_names:
             material_hint = self.get_materials_hint(material_names)
@@ -110,6 +115,7 @@ class PropertiesExtractor(BasePropertiesExtractor):
         return robust_json_parse(output.content)
     
     def extract_structural_properties(self, fulltext: str, llm, material_names: Optional[List[str]] = None) -> Dict:
+        self.fulltext = fulltext
         material_hint = ""
         if material_names:
             material_hint = self.get_materials_hint(material_names)
@@ -137,6 +143,7 @@ class PropertiesExtractor(BasePropertiesExtractor):
         for i, table in enumerate(table_data, 1):
             combined_block += f"### Table {i} Caption:\n{table['caption']}\n\n"
             combined_block += f"### Table {i} CSV Data:\n{json.dumps(table['rows'], indent=2)}\n\n"
+        self.combined_block = combined_block
 
         # Prompt
         if self.table_data_extraction_prompt is None:
@@ -280,3 +287,21 @@ class PropertiesExtractor(BasePropertiesExtractor):
 
         print(f"🧾 Judge log: {len(log_lines)} entries validated for this folder.")
         return {"materials": cleaned, "notes": notes}
+
+    def hide_fulltext(self, text : str, n : int = 30) -> str:
+        if not self.fulltext:
+            return text  # чтобы не делать бесконечные "вхождения" пустой строки
+
+        if self.fulltext in text:
+            shortened = self.fulltext if len(self.fulltext) <= 2 * n else (self.fulltext[:n] + "..." + self.fulltext[-n:])
+            return text.replace(self.fulltext, shortened)
+
+        return text
+    
+    def hide_table_context(self, text : str, n : int = 30) -> str:
+        if not self.table_context:
+            return text  # чтобы не делать бесконечные "вхождения" пустой строки
+
+        if self.table_context in text:
+            shortened = self.table_context if len(self.table_context) <= 2 * n else (self.table_context[:n] + "..." + self.table_context[-n:])
+            return text.replace(self.table_context, shortened)
