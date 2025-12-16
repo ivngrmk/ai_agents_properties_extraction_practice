@@ -2,7 +2,7 @@ import os
 import requests
 from typing import Optional
 import pandas as pd
-from helpers import safe_doi
+from .helpers import safe_doi
 
 TIMEOUT = 30
 

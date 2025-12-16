@@ -12,8 +12,8 @@ from lxml import etree
 import nltk
 from nltk.tokenize import sent_tokenize
 
-from helpers import safe_doi
-from mat_patterns import RETAIN_PATTERNS
+from .helpers import safe_doi
+from .mat_patterns import RETAIN_PATTERNS
 
 RETAIN_RE = [re.compile(pat, re.IGNORECASE) for pat in RETAIN_PATTERNS]
 
