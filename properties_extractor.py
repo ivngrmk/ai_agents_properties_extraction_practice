@@ -23,22 +23,34 @@ class PropertiesExtractor(BasePropertiesExtractor):
         self.materials_extraction_prompt : Optional[str] = None
         self.materials_extraction_in : Optional[str] = None
         self.materials_extraction_out : Optional[str] = None
+        self.materials_extraction_llm_output : Optional[str] = None
 
         self.thermo_properties_extraction_prompt : Optional[str] = None
         self.thermo_properties_extraction_in : Optional[str] = None
         self.thermo_properties_extraction_out : Optional[str] = None
+        self.thermo_properties_extraction_llm_output : Optional[str] = None
 
         self.structure_properties_extraction_prompt : Optional[str] = None
         self.structure_properties_extraction_in : Optional[str] = None
         self.structure_properties_extraction_out : Optional[str] = None
+        self.structure_properties_extraction_llm_output : Optional[str] = None
 
         self.table_data_extraction_prompt : Optional[str] = None
         self.table_data_extraction_in : Optional[str] = None
         self.table_data_extraction_out : Optional[str] = None
+        self.table_data_extraction_llm_output : Optional[str] = None
 
         self.judge_prompt : Optional[str] = None
         self.judge_in : Optional[str] = None
         self.judge_out : Optional[str] = None
+        self.judge_llm_output : Optional[str] = None
+
+    def reset(self) -> None:
+        self.materials_extraction_llm_output = None
+        self.thermo_properties_extraction_llm_output = None
+        self.structure_properties_extraction_llm_output = None
+        self.table_data_extraction_llm_output = None
+        self.judge_llm_output = None
 
     def set_materials_extraction_prompt(self, prompt : str) -> None:
         self.materials_extraction_prompt = prompt
@@ -80,7 +92,11 @@ class PropertiesExtractor(BasePropertiesExtractor):
                 f.write(final_prompt)
         
         self.materials_extraction_in = final_prompt
-        out = llm.invoke(final_prompt)
+        if self.materials_extraction_llm_output is not None:
+            print("Using saved llm output without actual request for materials extraction node.")
+            out = self.materials_extraction_llm_output
+        else:
+            out = llm.invoke(final_prompt)
         self.materials_extraction_out = out.content
 
         data = robust_json_parse(out.content)
@@ -109,7 +125,11 @@ class PropertiesExtractor(BasePropertiesExtractor):
         final_prompt = prompt.format(fulltext=fulltext, material_hint=material_hint, thermo_mat_limit=self.THERMO_MAT_LIMIT)
 
         self.thermo_properties_extraction_in = final_prompt
-        output = llm.invoke(final_prompt)
+        if self.thermo_properties_extraction_llm_output is not None:
+            print("Using saved llm output without actual request for therm. properties extraction node.")
+            output = self.thermo_properties_extraction_llm_output
+        else:
+            output = llm.invoke(final_prompt)
         self.thermo_properties_extraction_out = output.content
 
         return robust_json_parse(output.content)
@@ -124,7 +144,11 @@ class PropertiesExtractor(BasePropertiesExtractor):
         prompt = PromptTemplate.from_template(self.structure_properties_extraction_prompt)
         final_prompt = prompt.format(fulltext=fulltext, material_hint=material_hint)
         self.structure_properties_extraction_in = final_prompt
-        output = llm.invoke(final_prompt)
+        if self.structure_properties_extraction_llm_output is not None:
+            print("Using saved llm output without actual request for structural properties extraction node.")
+            output = self.structure_properties_extraction_llm_output
+        else:
+            output = llm.invoke(final_prompt)
         self.structure_properties_extraction_out = output.content
         return robust_json_parse(output.content)
 
@@ -151,7 +175,11 @@ class PropertiesExtractor(BasePropertiesExtractor):
         final_prompt = self.table_data_extraction_prompt.format(material_hint = material_hint, combined_block = combined_block)
         try:
             self.table_data_extraction_in = final_prompt
-            output = llm.invoke(final_prompt)
+            if self.table_data_extraction_llm_output is not None:
+                print("Using saved llm output without actual request for table data extraction node.")
+                output = self.table_data_extraction_llm_output
+            else:
+                output = llm.invoke(final_prompt)
             self.table_data_extraction_out = output.content
 
             return robust_json_parse(output.content)
@@ -200,7 +228,11 @@ class PropertiesExtractor(BasePropertiesExtractor):
 
         # --- Run model ---
         self.judge_in = final_prompt
-        res = llm.invoke(final_prompt)
+        if self.judge_llm_output is not None:
+            print("Using saved llm output without actual request for judge node.")
+            res = self.judge_llm_output
+        else:
+            res = llm.invoke(final_prompt)
         self.judge_out = res.content
 
         # --- Parse output safely ---
@@ -293,7 +325,7 @@ class PropertiesExtractor(BasePropertiesExtractor):
             return text  # чтобы не делать бесконечные "вхождения" пустой строки
 
         if self.fulltext in text:
-            shortened = self.fulltext if len(self.fulltext) <= 2 * n else (self.fulltext[:n] + "..." + self.fulltext[-n:])
+            shortened = self.fulltext if len(self.fulltext) <= 2 * n else (self.fulltext[:n] + "... FILTERED ARTICLE TEXT ..." + self.fulltext[-n:])
             return text.replace(self.fulltext, shortened)
 
         return text
@@ -303,5 +335,5 @@ class PropertiesExtractor(BasePropertiesExtractor):
             return text  # чтобы не делать бесконечные "вхождения" пустой строки
 
         if self.combined_block in text:
-            shortened = self.combined_block if len(self.combined_block) <= 2 * n else (self.combined_block[:n] + "..." + self.combined_block[-n:])
+            shortened = self.combined_block if len(self.combined_block) <= 2 * n else (self.combined_block[:n] + "... TABLES COMBINED BLOCK ..." + self.combined_block[-n:])
             return text.replace(self.combined_block, shortened)
