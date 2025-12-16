@@ -298,10 +298,10 @@ class PropertiesExtractor(BasePropertiesExtractor):
 
         return text
     
-    def hide_table_context(self, text : str, n : int = 30) -> str:
-        if not self.table_context:
+    def hide_combined_block(self, text : str, n : int = 30) -> str:
+        if not self.combined_block:
             return text  # чтобы не делать бесконечные "вхождения" пустой строки
 
-        if self.table_context in text:
-            shortened = self.table_context if len(self.table_context) <= 2 * n else (self.table_context[:n] + "..." + self.table_context[-n:])
-            return text.replace(self.table_context, shortened)
+        if self.combined_block in text:
+            shortened = self.combined_block if len(self.combined_block) <= 2 * n else (self.combined_block[:n] + "..." + self.combined_block[-n:])
+            return text.replace(self.combined_block, shortened)
