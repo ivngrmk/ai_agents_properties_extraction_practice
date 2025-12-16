@@ -86,10 +86,10 @@ class PropertiesExtractor(BasePropertiesExtractor):
             raise PromptNotImplementedError("materials_extraction_prompt is not yet defined")
         prompt = PromptTemplate.from_template(self.materials_extraction_prompt)
         final_prompt = prompt.format(fulltext=fulltext, max_materials=max_materials)
-        mp_prompt_f_path = "material_candidates_prompt.txt"
-        if not os.path.isfile(mp_prompt_f_path):
-            with open(mp_prompt_f_path, "w", encoding='utf-8') as f:
-                f.write(final_prompt)
+        # mp_prompt_f_path = "material_candidates_prompt.txt"
+        # if not os.path.isfile(mp_prompt_f_path):
+        #     with open(mp_prompt_f_path, "w", encoding='utf-8') as f:
+        #         f.write(final_prompt)
         
         self.materials_extraction_in = final_prompt
         if self.materials_extraction_llm_output is not None:
