@@ -6,7 +6,6 @@ import time
 import pandas as pd
 from pathlib import Path
 from typing import Any, TypedDict, Optional, List, Dict
-from dotenv import load_dotenv
 
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, END
@@ -39,8 +38,6 @@ class BasePropertiesExtractor(ABC):
     def __init__(self) -> None:
         self.state : Optional[State] = None
         self.app = self.build_app()
-
-        load_dotenv()
 
         self.model_name = os.getenv("OPENAI_MODEL")
         self.base_url = os.getenv("OPENAI_BASE_URL")
