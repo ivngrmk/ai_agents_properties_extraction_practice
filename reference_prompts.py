@@ -18,7 +18,7 @@ MATERIALS_EXTRACTION_REF_PROMPT = """
 
     Text:
     ```{fulltext}```
-"""
+""".strip()
 
 THERMO_PROPERTIES_EXTRACTION_REF_PROMPT = """
     You are a research extraction agent for thermoelectric materials.
@@ -62,7 +62,7 @@ THERMO_PROPERTIES_EXTRACTION_REF_PROMPT = """
 
     Text:
     ```{fulltext}```
-"""
+""".strip()
 
 STRUCTURE_PROPERTIES_EXTRACTION_REF_PROMPT = """
     You are a structural extraction agent for thermoelectric materials.
@@ -102,7 +102,7 @@ STRUCTURE_PROPERTIES_EXTRACTION_REF_PROMPT = """
 
     Text:
     ```{fulltext}```
-"""
+""".strip()
 
 TABLE_DATA_EXTRACTION_REF_PROMPT = """
     You are a scientific table extraction agent working on thermoelectric materials.
@@ -164,7 +164,7 @@ TABLE_DATA_EXTRACTION_REF_PROMPT = """
 
     ### Tables and Captions:
     {combined_block}
-"""
+""".strip()
 
 JUDGE_REF_PROMPT = """
     You are a scientific verifier.
@@ -222,4 +222,4 @@ JUDGE_REF_PROMPT = """
 
     ### Merged JSON of Extracted Values
     ```{merged_json}```
-"""
+""".strip()
