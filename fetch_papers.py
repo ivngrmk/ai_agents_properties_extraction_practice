@@ -22,6 +22,7 @@ def load_api_base() -> str:
     api_base = os.getenv("ELSEVIER_API_BASE")
     if not api_base:
         raise RuntimeError("ELSEVIER_API_BASE not found in environment")
+    return api_base
 
 def fetch_elsevier_xml(doi: str) -> str:
     """
