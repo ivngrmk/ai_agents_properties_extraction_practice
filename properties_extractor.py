@@ -111,6 +111,7 @@ class PropertiesExtractor(BasePropertiesExtractor):
             if key and key not in seen:
                 seen.add(key)
                 result.append(key)
+        self.materials_extraction_llm_output = out
         return result
 
     def extract_thermo_properties(self, fulltext: str, llm, material_names: Optional[List[str]] = None) -> Dict:
@@ -131,8 +132,9 @@ class PropertiesExtractor(BasePropertiesExtractor):
         else:
             output = llm.invoke(final_prompt)
         self.thermo_properties_extraction_out = output.content
-
-        return robust_json_parse(output.content)
+        json_parsed = robust_json_parse(output.content)
+        self.thermo_properties_extraction_llm_output = output
+        return json_parsed
     
     def extract_structural_properties(self, fulltext: str, llm, material_names: Optional[List[str]] = None) -> Dict:
         self.fulltext = fulltext
@@ -150,7 +152,9 @@ class PropertiesExtractor(BasePropertiesExtractor):
         else:
             output = llm.invoke(final_prompt)
         self.structure_properties_extraction_out = output.content
-        return robust_json_parse(output.content)
+        json_parsed = robust_json_parse(output.content)
+        self.structure_properties_extraction_llm_output = output
+        return json_parsed
 
     def extract_from_tables(self, table_data: list, llm, material_names: Optional[List[str]] = None) -> dict:
         """Combine all tables and captions, and extract both thermo and structural fields."""
@@ -182,7 +186,9 @@ class PropertiesExtractor(BasePropertiesExtractor):
                 output = llm.invoke(final_prompt)
             self.table_data_extraction_out = output.content
 
-            return robust_json_parse(output.content)
+            json_parsed = robust_json_parse(output.content)
+            self.table_data_extraction_llm_output = output
+            return json_parsed
         except Exception as e:
             print("❌ Table extraction failed:", e)
             return {"materials": []}
@@ -318,6 +324,7 @@ class PropertiesExtractor(BasePropertiesExtractor):
             log.write("\n" + "=" * 60 + "\n")
 
         print(f"🧾 Judge log: {len(log_lines)} entries validated for this folder.")
+        self.judge_llm_output = res
         return {"materials": cleaned, "notes": notes}
 
     def hide_fulltext(self, text : str, n : int = 30) -> str:
