@@ -1,0 +1,6 @@
+doi_key,name,ZT_values,electrical_conductivity,electrical_resistivity,seebeck_coefficient,power_factor,thermal_conductivity,compound_type,crystal_structure,lattice_structure,unit,space_group,processing_method,material_name,lattice_parameters.a,lattice_parameters.b,lattice_parameters.c,doping.doping_type,doping.dopants
+10.1016/j.jssc.2019.03.009,RbAg3Sm2Se5,"[{'value': 0.06, 'ZT_temperature': None, 'ZT_temperature_unit': None}]",,,,,,,RbAg3Sm2Se5 type,,,,,RbAg3Sm2Se5,,,,,
+10.1016/j.jssc.2019.03.009,YCuTe2,"[{'value': 0.75, 'ZT_temperature': 780, 'ZT_temperature_unit': 'K'}]",,,,,,,,,,,,YCuTe2,,,,,
+10.1016/j.jssc.2019.03.009,K2Ag(Ag2CeTe4),,"[{'σ_value': 0.01, 'σ_unit': 'S/cm', 'σ_Temperature': 300, 'σ_Temp_unit': 'K'}]",,"[{'S_value': 160, 'S_unit': 'μV/K', 'S_Temperature': 300, 'S_Temp_unit': 'K'}]",,,,K2Ag(Ag2CeTe4) type,,,,,K2Ag(Ag2CeTe4),,,,,
+10.1016/j.jssc.2019.03.009,TmCuTe2,"[{'value': 0.81, 'ZT_temperature': 745, 'ZT_temperature_unit': 'K'}]",,,,,,,,,,,,TmCuTe2,,,,,
+10.1016/j.jssc.2019.03.009,TbCuTe2,"[{'value': 1.0, 'ZT_temperature': 750, 'ZT_temperature_unit': 'K'}]",,,,,,,,,,,,TbCuTe2,,,,,
